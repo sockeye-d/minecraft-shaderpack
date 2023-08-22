@@ -1,5 +1,6 @@
 #version 120
 
+
 uniform sampler2D gcolor;
 
 varying vec2 texcoord;
