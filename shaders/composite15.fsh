@@ -15,7 +15,7 @@ varying vec2 texcoord;
 void main() {
 	vec3 color = textureLod(gcolor, texcoord, 0.0).rgb;
 
-	float eyeAdjust = float(eyeBrightnessSmooth.r + eyeBrightnessSmooth.g);
+	float eyeAdjust = float(eyeBrightnessSmooth.r + eyeBrightnessSmooth.g*2.0);
 	eyeAdjust += 1.0;
 	eyeAdjust /= 240.0;
 	eyeAdjust = max(0.01, eyeAdjust);
