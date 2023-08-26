@@ -53,8 +53,11 @@ vec4 noised( in vec3 x )
     vec3 p = floor(x);
     vec3 w = fract(x);
 
-    vec3 u = w*w*w*(w*(w*6.0-15.0)+10.0);
-    vec3 du = 30.0*w*w*(w*(w-2.0)+1.0);
+    // vec3 u = w*w*w*(w*(w*6.0-15.0)+10.0);
+    // vec3 du = 30.0*w*w*(w*(w-2.0)+1.0);
+
+    vec3 u = 3.0*w*w - 2.0*w*w*w;
+    vec3 du = 6.0*w*(1.0-w);
 
     float a = hash13( p+vec3(0,0,0) );
     float b = hash13( p+vec3(1,0,0) );

@@ -81,14 +81,15 @@ vec3 sunAndMoon(vec3 r, vec3 l, vec3 m, int moonPhase) {
     #define SUN_SIZE 0.0025
     #define MOON_SIZE 0.001
 
-    vec3 sunDisk = smoothstep(1.0 - SUN_SIZE, 1.0, max(0.0, dot(r, l)))*vec3(1.0,0.55,0.1) * 500.0 * smoothstep(-0.02, 1.0, r.y);
+    vec3 sunDisk = smoothstep(1.0 - SUN_SIZE, 1.0, max(0.0, dot(r, l)))*vec3(1.0,0.55,0.1) * 5000.0 * smoothstep(-0.1, 1.0, r.y);
     vec3 moonDisk = smoothstep(1.0 - MOON_SIZE, 1.0 - MOON_SIZE * 0.99, max(0.0, dot(r, m)))*vec3(1) * 4.0;
 
     vec2 moonLocalCoord = clamp((mat3(m, cross(m, AXIS_Z), AXIS_Z) * r).yz / acos(1.0 - MOON_SIZE), vec2(-1), vec2(1));
     vec3 moonSphere = vec3(moonLocalCoord, sqrt(1.0 - dot(moonLocalCoord, moonLocalCoord))).xzy;
     float moonTex = fbm(moonSphere*2.0, 2.0);
+    moonTex *= moonTex * moonTex;
     moonDisk *= max(0.0, moonTex * 0.9 + 0.1);
-    moonDisk *= max(0.0, dot(moonSphere, rot(AXIS_Y, AXIS_X, -float(moonPhase) / 7.0 * TAU))) + 0.05;
+    moonDisk *= max(0.0, dot(moonSphere, rot(AXIS_Y, AXIS_X, -float(moonPhase) / 7.0 * TAU))) * 2.0 * vec3(0.7, 0.8, 1) + 0.05;
 
     return sunDisk + moonDisk;
 }
@@ -125,4 +126,12 @@ vec3 skylight(vec3 r, vec3 l, vec3 m, int moonPhase)
     finalColor += vec3(0.05, 0.05, 0.1)*0.3;
     
     return finalColor;
+}
+
+bool compare(float a, float b, float e) {
+    return abs(b - a) < e;
+}
+
+bool isBlockType(vec2 id, int type) {
+    return compare(id.x, float(type), 0.5);
 }

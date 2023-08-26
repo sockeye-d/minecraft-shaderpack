@@ -1,6 +1,7 @@
 #version 120
 
 #include "util/generic.inc"
+#include "util/color.inc"
 
 uniform sampler2D texture;
 uniform int worldTime;
@@ -9,9 +10,30 @@ varying vec2 lightmap;
 varying vec2 texcoord;
 varying vec4 glcolor;
 varying vec3 normal;
+varying vec2 blockType;
 
 void main() {
 	vec4 color = texture2D(texture, texcoord) * glcolor;
+	if (isBlockType(blockType, 1)) {
+		color.rgb *= color.rgb * color.rgb * color.rgb * color.rgb * color.rgb;
+		color.rgb *= 5.0;
+	}
+
+	if (isBlockType(blockType, 2)) {
+		color.rgb *= color.rgb * color.rgb;
+		color.rgb *= 10.0;
+	}
+
+	if (isBlockType(blockType, 3)) {
+		color.rgb = saturation(color.rgb, 0.5);
+		color.rgb *= color.rgb * color.rgb * color.rgb * color.rgb * color.rgb;
+		color.rgb *= 100.0;
+	}
+
+	if (isBlockType(blockType, 4)) {
+		color.rgb = color.rgb + pow(color.rgb, vec3(20)) * 15.0;
+	}
+	
 	color = applyLighting(color, normal, lightmap, sunPosition(worldTime), moonPosition(worldTime));
 
 /* DRAWBUFFERS:0 */

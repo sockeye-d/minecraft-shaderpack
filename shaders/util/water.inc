@@ -3,9 +3,9 @@
 #define NOISE_INC
 #endif
 
-#define WAVE_SIZE 0.05
-#define WAVE_SPEED 0.5
-#define WAVE_HEIGHT 0.2
+#define WAVE_SIZE 0.5
+#define WAVE_SPEED 1.0
+#define WAVE_HEIGHT 0.1
 
 vec2 singleWaveDx(float x) {
     return vec2(sin(x), cos(x));
@@ -25,7 +25,7 @@ vec3 waterHeight(in vec2 p, float time, float octaves) {
     for(float i = 0.0; i < octaves; i++) {
         vec4 octave = noised(vec3(p * f + time * (i + 1.0), time + i * 0.707).xzy);
         r += octave.x * m;
-        d += octave.yz * m;// * exp2(-i);
+        d += octave.yz;// * exp2(-i);
         p = rot * p;
 
         f *= a;

@@ -13,3 +13,11 @@ vec3 hillAcesTonemap(vec3 col) {
     vec3(-0.10208,  1.10813, -0.00605),
     vec3(-0.00327, -0.07276,  1.07602)), vec3(0), vec3(1));
 }
+
+float luminance(vec3 col) {
+    return dot(col, vec3(0.33));
+}
+
+vec3 saturation(vec3 col, float sat) {
+    return mix(vec3(luminance(col)), col, sat);
+}

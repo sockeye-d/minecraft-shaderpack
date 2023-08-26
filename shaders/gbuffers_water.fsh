@@ -28,20 +28,21 @@ float fresnel(vec3 n, vec3 rd) {
 }
 
 void main() {
-	vec3 wave = waterHeight(vertexPos.xz * WAVE_SIZE, frameTimeCounter * WAVE_SPEED, 8.0) * WAVE_HEIGHT * 0.2;
+	vec3 wave = waterHeight(vertexPos.xz * WAVE_SIZE, frameTimeCounter * WAVE_SPEED, 4.0) * WAVE_HEIGHT * 0.2;
 	vec3 waveVec = normalFromGrad(wave.yz);
 	vec3 n = (tbn(normalize(normal)) * waveVec).xzy;
 
 	vec4 viewDir = vec4(gl_FragCoord.xy / vec2(viewWidth, viewHeight) * 2.0 - 1.0, 1.0, 1.0);
 	viewDir = (gbufferModelViewInverse * gbufferProjectionInverse * viewDir);
 
-	vec4 color = vec4(vec3(0.2, 0.5, 1.0)*0.5, 0.5);
+	vec4 color = vec4(vec3(0.2, 0.5, 1.0)*0.8, 0.5);
 
 	color = applyLighting(color, n, lightmap, sunPosition(worldTime), moonPosition(worldTime));
-	vec3 sky = skylight(reflect(normalize(viewDir.xyz), n), sunPosition(worldTime), moonPosition(worldTime), moonPhase);
+	vec3 reflected = reflect(normalize(viewDir.xyz), n);
+	vec3 sky = skylight(reflected, sunPosition(worldTime), moonPosition(worldTime), moonPhase) * vec3(0.5, 0.8, 1);
 
-	float fr = fresnel(normal, viewDir.xyz)*0.8+0.2;
-	color.rgb += sky * fr * 0.5;
+	float fr = fresnel(normal, viewDir.xyz);
+	color.rgb += sky * fr;
 	color.a = 1.0-(1.0-fresnel(normal, viewDir.xyz))*(1.0 - color.a);
 
 /* DRAWBUFFERS:0 */
