@@ -1,7 +1,7 @@
-#define BLOOM_PASS_0_SIZE 0.025
-#define BLOOM_PASS_0_RES 16.0
-#define BLOOM_PASS_1_SIZE 0.05
-#define BLOOM_PASS_1_RES 24.0
+#define BLOOM_PASS_0_SIZE 0.005
+#define BLOOM_PASS_0_RES 4.0
+#define BLOOM_PASS_1_SIZE 0.02
+#define BLOOM_PASS_1_RES 16.0
 
 vec2 hash21(float p) {
 	vec3 p3 = fract(vec3(p) * vec3(.1031, .1030, .0973));
@@ -16,7 +16,7 @@ float hash12(vec2 p) {
 }
 
 float gaussian(float x) {
-    return exp(-36.0*x*x);
+    return exp(-8.0*x*x);
 }
 
 vec4 blur(sampler2D tex, vec2 uv, float size, float res, vec2 direction, float time) {

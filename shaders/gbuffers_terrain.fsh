@@ -31,7 +31,15 @@ void main() {
 	}
 
 	if (isBlockType(blockType, 4)) {
-		color.rgb = color.rgb + pow(color.rgb, vec3(20)) * 15.0;
+		color.rgb = color.rgb + pow(color.rgb, vec3(20)) * 25.0;
+	}
+
+	if (isBlockType(blockType, 5)) {
+		color.rgb = color.rgb + pow(color.rgb, vec3(20)) * 50.0;
+	}
+
+	if (isBlockType(blockType, 6)) {
+		color.rgb = color.rgb + pow(color.rgb, vec3(10)) * 1000.0;
 	}
 	
 	color = applyLighting(color, normal, lightmap, sunPosition(worldTime), moonPosition(worldTime));

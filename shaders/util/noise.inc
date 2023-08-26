@@ -17,7 +17,7 @@ float noise( in vec3 x )
     vec3 p = floor(x);
     vec3 w = fract(x);
 
-    vec3 u = w*w*w*(w*(w*6.0-15.0)+10.0);
+    vec3 u = 3.0*w*w - 2.0*w*w*w;
 
     float a = hash13( p+vec3(0,0,0) );
     float b = hash13( p+vec3(1,0,0) );
@@ -36,6 +36,34 @@ float noise( in vec3 x )
     float k5 =   a - c - e + g;
     float k6 =   a - b - e + f;
     float k7 = - a + b + c - d + e - f - g + h;
+
+    return (k0 + k1*u.x + k2*u.y + k3*u.z + k4*u.x*u.y + k5*u.y*u.z + k6*u.z*u.x + k7*u.x*u.y*u.z);
+}
+
+vec3 rgbNoise( in vec3 x )
+{
+    vec3 p = floor(x);
+    vec3 w = fract(x);
+
+    vec3 u = 3.0*w*w - 2.0*w*w*w;
+
+    vec3 a = hash33( p+vec3(0,0,0) );
+    vec3 b = hash33( p+vec3(1,0,0) );
+    vec3 c = hash33( p+vec3(0,1,0) );
+    vec3 d = hash33( p+vec3(1,1,0) );
+    vec3 e = hash33( p+vec3(0,0,1) );
+    vec3 f = hash33( p+vec3(1,0,1) );
+    vec3 g = hash33( p+vec3(0,1,1) );
+    vec3 h = hash33( p+vec3(1,1,1) );
+
+    vec3 k0 =   a;
+    vec3 k1 =   b - a;
+    vec3 k2 =   c - a;
+    vec3 k3 =   e - a;
+    vec3 k4 =   a - b - c + d;
+    vec3 k5 =   a - c - e + g;
+    vec3 k6 =   a - b - e + f;
+    vec3 k7 = - a + b + c - d + e - f - g + h;
 
     return (k0 + k1*u.x + k2*u.y + k3*u.z + k4*u.x*u.y + k5*u.y*u.z + k6*u.z*u.x + k7*u.x*u.y*u.z);
 }
