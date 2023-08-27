@@ -2,14 +2,10 @@
 
 #include "util/color.inc"
 
-/*
-const int gcolorFormat = RGBA32F;
-const bool gcolorMipmapEnabled = true;
-*/
-
 uniform sampler2D gcolor;
 uniform sampler2D colortex4;
 uniform sampler2D colortex5;
+uniform sampler2D depthtex0;
 uniform int worldTime;
 
 uniform ivec2 eyeBrightnessSmooth;
@@ -44,9 +40,9 @@ void main() {
 	bloom *= bloom;
 	bloom /= eyeAdjust * eyeAdjust * eyeAdjust;
 
-	color += bloom;
+	color += max(vec3(0), bloom);
 
 /* DRAWBUFFERS:0 */
-	gl_FragData[0] = vec4(hillAcesTonemap(color / eyeAdjust), 1.0); //gcolor
-	//gl_FragData[0] = texture2D(colortex5, texcoord);
+	gl_FragData[0] = vec4(tonemap(color / eyeAdjust), 1.0); //gcolor
+	//gl_FragData[0] = texture2D(depthtex0, texcoord).rrrr;
 }

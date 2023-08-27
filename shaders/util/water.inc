@@ -20,16 +20,14 @@ vec3 waterHeight(in vec2 p, float time, float octaves) {
 
     float r = 0.0;
     vec2 d = vec2(0);
-    float t = 3;
-    mat2 rot = mat2(cos(t), -sin(t), sin(t), cos(t));
+    
     for(float i = 0.0; i < octaves; i++) {
         vec4 octave = noised(vec3(p * f + time * (i + 1.0), time + i * 0.707).xzy);
         r += octave.x * m;
-        d += octave.yz;// * exp2(-i);
-        p = rot * p;
-
+        d += octave.yz;
         f *= a;
         m *= b;
+        p.xy = p.yx * vec2(-1, 1);
     }
     return vec3(r, d);
 }

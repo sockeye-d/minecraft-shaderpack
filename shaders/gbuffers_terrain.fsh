@@ -4,6 +4,7 @@
 #include "util/color.inc"
 
 uniform sampler2D texture;
+uniform float wetness;
 uniform int worldTime;
 
 varying vec2 lightmap;
@@ -42,7 +43,7 @@ void main() {
 		color.rgb = color.rgb + pow(color.rgb, vec3(10)) * 1000.0;
 	}
 	
-	color = applyLighting(color, normal, lightmap, sunPosition(worldTime), moonPosition(worldTime));
+	LIGHTING
 
 /* DRAWBUFFERS:0 */
 	gl_FragData[0] = color; //gcolor

@@ -28,7 +28,7 @@ vec4 blur(sampler2D tex, vec2 uv, float size, float res, vec2 direction, float t
         vec2 uv2 = uv + direction * x * size;
         float w = gaussian(x);
         tw += w;
-        r += textureLod(tex, uv2, 0.0) * w;
+        r += max(vec4(0), textureLod(tex, uv2, 0.0) * w);
     }
 
     return r / tw;

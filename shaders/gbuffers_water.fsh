@@ -13,6 +13,7 @@ uniform float viewWidth;
 uniform float viewHeight;
 uniform float frameTimeCounter;
 uniform vec3 cameraPosition;
+uniform float wetness;
 
 uniform mat4 gbufferModelViewInverse;
 uniform mat4 gbufferProjectionInverse;
@@ -37,7 +38,7 @@ void main() {
 
 	vec4 color = vec4(vec3(0.2, 0.5, 1.0)*0.8, 0.5);
 
-	color = applyLighting(color, n, lightmap, sunPosition(worldTime), moonPosition(worldTime));
+	color = applyLighting(color, n, lightmap, sunPosition(worldTime), moonPosition(worldTime), wetness);
 	vec3 reflected = reflect(normalize(viewDir.xyz), n);
 	vec3 sky = skylight(reflected, sunPosition(worldTime), moonPosition(worldTime), moonPhase) * vec3(0.5, 0.8, 1);
 

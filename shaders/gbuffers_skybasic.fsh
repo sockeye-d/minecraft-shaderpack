@@ -4,7 +4,7 @@
 
 uniform float viewHeight;
 uniform float viewWidth;
-uniform mat4 gbufferModelView;
+uniform mat4 gbufferModelViewInverse;
 uniform mat4 gbufferProjectionInverse;
 uniform int worldTime;
 uniform int moonPhase;
@@ -14,15 +14,20 @@ varying vec4 starData; //rgb = star color, a = flag for weather or not this pixe
 
 void main() {
 	vec3 color;
+	vec4 pos = vec4(gl_FragCoord.xy / vec2(viewWidth, viewHeight) * 2.0 - 1.0, 1.0, 1.0);
+	pos = gbufferModelViewInverse * gbufferProjectionInverse * pos;
+	pos.xyz = normalize(pos.xyz);
+	vec3 sp = sunPosition(worldTime);
+	vec3 mp = moonPosition(worldTime);
+	vec3 baseSky = sky(pos.xyz, sp);
 	if (starData.a > 0.5) {
 		color = starData.rgb;
 	}
 	else {
-		vec4 pos = vec4(gl_FragCoord.xy / vec2(viewWidth, viewHeight) * 2.0 - 1.0, 1.0, 1.0);
-		pos = inverse(gbufferModelView) * gbufferProjectionInverse * pos;
-		color = skylight(normalize(pos.xyz), sunPosition(worldTime), moonPosition(worldTime), moonPhase);
+		color = baseSky + sunAndMoon(pos.xyz, sp, mp, moonPhase);
 	}
 
-/* DRAWBUFFERS:0 */
+/* RENDERTARGETS:0,1 */
 	gl_FragData[0] = vec4(color, 1.0); //gcolor
+	gl_FragData[1] = vec4(baseSky, 1.0); //colortex1
 }

@@ -10,6 +10,8 @@
 #define PI  3.1415927
 #define TAU 6.2831853
 
+#define LIGHTING color = applyLighting(color, normal, lightmap, sunPosition(worldTime), moonPosition(worldTime), wetness);
+
 vec3 rot(vec3 p, vec3 k, float t)
 {
     k = normalize(k);
@@ -37,13 +39,13 @@ vec2 modifyLightmap(vec2 lm)
     return lm * lm;
 }
 
-vec4 applyLighting(vec4 color, vec3 normal, vec2 lightmap, vec3 sunPos, vec3 moonPos) {
+vec4 applyLighting(vec4 color, vec3 normal, vec2 lightmap, vec3 sunPos, vec3 moonPos, float wetness) {
     vec3 c = color.rgb;
     vec3 l = vec3(0);
 
     lightmap = modifyLightmap(lightmap);
 
-    vec3 sun = vec3(max(0.0, dot(normal, sunPos))*0.5+0.5) * 5.0;
+    vec3 sun = vec3((max(0.0, dot(normal, sunPos))*0.5+0.1)*(1.0-wetness)+0.1) * 5.0;
     sun = mix(vec3(0), sun, smoothstep(-0.3, 0.3, sunPos.y));
     sun *= mix(vec3(1.0, 0.5, 0.0), vec3(1), max(0.0, sunPos.y));
     sun *= lightmap.g;
@@ -62,13 +64,13 @@ vec4 applyLighting(vec4 color, vec3 normal, vec2 lightmap, vec3 sunPos, vec3 moo
     return vec4(c, color.a);
 }
 
-vec4 applyLightmap(vec4 color, vec2 lightmap, vec3 sunPos, vec3 moonPos) {
+vec4 applyLightmap(vec4 color, vec2 lightmap, vec3 sunPos, vec3 moonPos, float wetness) {
     vec3 c = color.rgb;
     vec3 l = vec3(0);
 
     lightmap = modifyLightmap(lightmap);
 
-    l += lightmap.g * smoothstep(-0.3, 0.3, sunPos.y);
+    l += lightmap.g * smoothstep(-0.3, 0.3, sunPos.y) * wetness;
 
     l += lightmap.r * vec3(1.0, 0.8, 0.4);
 
@@ -94,8 +96,7 @@ vec3 sunAndMoon(vec3 r, vec3 l, vec3 m, int moonPhase) {
     return sunDisk + moonDisk;
 }
 
-vec3 skylight(vec3 r, vec3 l, vec3 m, int moonPhase)
-{
+vec3 sky(vec3 r, vec3 l) {
     // Utility macros
     #define impulse(x, k) k*x*exp(1.0 - k*x)
     #define sustain(x, k, p) pow(1.0 - exp(-k*x), p)
@@ -107,11 +108,11 @@ vec3 skylight(vec3 r, vec3 l, vec3 m, int moonPhase)
     float cx = (max(0.0, r.y) + 0.3) * sunBrightness * 0.9;
     // Distort gradient value by how far away it is from the sun
     // replicating the Earth's shadow
-    cx -= acos(dot(r, l)*0.5+0.5)*0.03;
+    //cx -= acos(dot(r, l)*0.5+0.5)*0.03;
     
     // Compute sky gradient
-    vec3 baseColor = max(vec3(0), vec3(impulse(cx, 8.0),
-                          0.5*sustain(cx, 32.0, 10.0) + 0.2*impulse(cx, 6.0),
+    vec3 baseColor = max(vec3(0), vec3(impulse(cx, 6.0) * 0.5,
+                          0.5*sustain(cx, 32.0, 10.0),// + 0.2*impulse(cx, 6.0),
                           sustain(cx, 10.0, 5.0))) * pow(sunBrightness, 0.7);
     
     // Get the halo around the sun and the gradient from bottom to top
@@ -121,11 +122,14 @@ vec3 skylight(vec3 r, vec3 l, vec3 m, int moonPhase)
     // Final color = base color + sun halo + sun disk + constant value so nights aren't completely black
     vec3 finalColor = baseColor * 3.0;
     finalColor += sunHalo * 3.0;
-    finalColor += sunAndMoon(r, l, m, moonPhase);
-
+    
     finalColor += vec3(0.05, 0.05, 0.1)*0.3;
     
     return finalColor;
+}
+
+vec3 skylight(vec3 r, vec3 l, vec3 m, int moonPhase) {
+    return sky(r, l) + sunAndMoon(r, l, m, moonPhase);
 }
 
 bool compare(float a, float b, float e) {

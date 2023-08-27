@@ -12,7 +12,6 @@ varying vec3 normal;
 
 void main() {
 	vec4 color = texture2D(texture, texcoord) * glcolor;
-	color = applyLightmap(color, lightmap, sunPosition(worldTime), moonPosition(worldTime));
 
 /* DRAWBUFFERS:0 */
 	gl_FragData[0] = color; //gcolor

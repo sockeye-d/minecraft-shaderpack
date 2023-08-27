@@ -2,15 +2,6 @@
 
 #include "util/blur.inc"
 
-/*
-const int gcolorFormat = RGBA32F;
-const bool gcolorMipmapEnabled = true;
-const int colortex4Format = RGBA32F;
-const bool colortex4MipmapEnabled = true;
-const int colortex5Format = RGBA32F;
-const bool colortex5MipmapEnabled = true;
-*/
-
 uniform sampler2D gcolor;
 uniform int worldTime;
 uniform int frameCounter;
