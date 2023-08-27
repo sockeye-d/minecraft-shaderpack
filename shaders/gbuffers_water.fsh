@@ -29,14 +29,15 @@ float fresnel(vec3 n, vec3 rd) {
 }
 
 void main() {
-	vec3 wave = waterHeight(vertexPos.xz * WAVE_SIZE, frameTimeCounter * WAVE_SPEED, 4.0) * WAVE_HEIGHT * 0.2;
-	vec3 waveVec = normalFromGrad(wave.yz);
-	vec3 n = (tbn(normalize(normal)) * waveVec).xzy;
-
+	vec3 n = normalize(normal);
 	vec4 viewDir = vec4(gl_FragCoord.xy / vec2(viewWidth, viewHeight) * 2.0 - 1.0, 1.0, 1.0);
 	viewDir = (gbufferModelViewInverse * gbufferProjectionInverse * viewDir);
+	vec4 color = texture(texture, texcoord);
 
-	vec4 color = vec4(vec3(0.2, 0.5, 1.0)*0.8, 0.5);
+	color = vec4(vec3(0.2, 0.5, 1.0)*0.8, 0.5);
+	vec3 wave = waterHeight(vertexPos.xz * WAVE_SIZE, frameTimeCounter * WAVE_SPEED, 4.0) * WAVE_HEIGHT * 0.2;
+	vec3 waveVec = normalFromGrad(wave.yz);
+	n = (tbn(n) * waveVec).xzy;
 
 	color = applyLighting(color, n, lightmap, sunPosition(worldTime), moonPosition(worldTime), wetness);
 	vec3 reflected = reflect(normalize(viewDir.xyz), n);

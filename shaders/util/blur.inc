@@ -33,3 +33,15 @@ vec4 blur(sampler2D tex, vec2 uv, float size, float res, vec2 direction, float t
 
     return r / tw;
 }
+
+vec4 radialBlur(sampler2D tex, vec2 uv, vec2 center, float res) {
+    vec4 r = vec4(0);
+    float tw = 0.0;
+    float st = 1.0 / res;
+
+    for(float x = 0.0; x < 1.0; x += st) {
+        r += max(vec4(0), textureLod(tex, (uv - center) * x + center, 3.0));
+    }
+
+    return r * st;
+}

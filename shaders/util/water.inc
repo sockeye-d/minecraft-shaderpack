@@ -5,7 +5,7 @@
 
 #define WAVE_SIZE 0.5
 #define WAVE_SPEED 1.0
-#define WAVE_HEIGHT 0.1
+#define WAVE_HEIGHT 0.2
 
 vec2 singleWaveDx(float x) {
     return vec2(sin(x), cos(x));

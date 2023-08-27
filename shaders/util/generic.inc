@@ -20,12 +20,11 @@ vec3 rot(vec3 p, vec3 k, float t)
 
 vec3 sunPosition(int ticks) {
     float t = (float(ticks) / 24000.0) * TAU;
-    return rot(AXIS_X, AXIS_Z, t);
+    return normalize(vec3(sin(t - vec2(11, 0)), 0));
 }
 
 vec3 moonPosition(int ticks) {
-    float t = (float(ticks + 12000) / 24000.0) * TAU;
-    return rot(AXIS_X, AXIS_Z, t);
+    return sunPosition(ticks + 12000);
 }
 
 #define invMix(a, b, x) ((x - a) / (b - a))
@@ -84,7 +83,7 @@ vec3 sunAndMoon(vec3 r, vec3 l, vec3 m, int moonPhase) {
     #define MOON_SIZE 0.001
 
     vec3 sunDisk = smoothstep(1.0 - SUN_SIZE, 1.0, max(0.0, dot(r, l)))*vec3(1.0,0.55,0.1) * 5000.0 * smoothstep(-0.1, 1.0, r.y);
-    vec3 moonDisk = smoothstep(1.0 - MOON_SIZE, 1.0 - MOON_SIZE * 0.99, max(0.0, dot(r, m)))*vec3(1) * 4.0;
+    vec3 moonDisk = smoothstep(1.0 - MOON_SIZE, 1.0 - MOON_SIZE * 0.99, max(0.0, dot(r, m)))*vec3(1) * 12.0;
 
     vec2 moonLocalCoord = clamp((mat3(m, cross(m, AXIS_Z), AXIS_Z) * r).yz / acos(1.0 - MOON_SIZE), vec2(-1), vec2(1));
     vec3 moonSphere = vec3(moonLocalCoord, sqrt(1.0 - dot(moonLocalCoord, moonLocalCoord))).xzy;
